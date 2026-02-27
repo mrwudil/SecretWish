@@ -2,17 +2,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { ArrowLeft, Link as LinkIcon, Copy, CheckCircle2 } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button, Card, Input, Select } from "@/components/ui-elements";
+import { Button, Card, Input, Select, RadioGroup } from "@/components/ui-elements";
 import { useCreateQuestion } from "@/hooks/use-questions";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  receiverEmail: z.string().email("Please enter a valid email address"),
-  eventType: z.string().min(1, "Event type is required").default("Birthday"),
-  revealOption: z.enum(["After Purchase", "Never"]).default("After Purchase"),
+  receiverEmail: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  eventType: z.string().min(1, "Event type is required"),
+  revealOption: z.enum(["After Purchase", "Never"]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -23,7 +23,7 @@ export default function Create() {
   const { toast } = useToast();
   const createMutation = useCreateQuestion();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       eventType: "Birthday",
@@ -102,22 +102,36 @@ export default function Create() {
                 error={errors.receiverEmail?.message}
               />
               
-              <div className="grid md:grid-cols-2 gap-6">
-                <Input
+              <div className="grid gap-6">
+                <Select
                   label="Occasion / Event"
-                  placeholder="e.g. Birthday, Anniversary, Christmas"
                   {...register("eventType")}
                   error={errors.eventType?.message}
-                />
-                
-                <Select
-                  label="When should they know?"
-                  {...register("revealOption")}
-                  error={errors.revealOption?.message}
                 >
-                  <option value="After Purchase">After I pick a gift</option>
-                  <option value="Never">Keep it completely secret</option>
+                  <option value="Birthday">Birthday</option>
+                  <option value="Anniversary">Anniversary</option>
+                  <option value="Christmas">Christmas</option>
+                  <option value="Valentine's Day">Valentine's Day</option>
+                  <option value="Graduation">Graduation</option>
+                  <option value="Other">Other</option>
                 </Select>
+                
+                <Controller
+                  name="revealOption"
+                  control={control}
+                  render={({ field }) => (
+                    <RadioGroup
+                      label="When should they know who asked?"
+                      options={[
+                        { label: "After I pick a gift", value: "After Purchase" },
+                        { label: "Keep it completely secret", value: "Never" }
+                      ]}
+                      value={field.value}
+                      onChange={field.onChange}
+                      error={errors.revealOption?.message}
+                    />
+                  )}
+                />
               </div>
 
               <div className="pt-4 border-t border-black/5 flex justify-end">

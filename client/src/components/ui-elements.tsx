@@ -48,29 +48,84 @@ export function Card({ className = "", children, ...props }: React.HTMLAttribute
   );
 }
 
-export function Input({ className = "", label, error, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { label?: string; error?: string }) {
-  return (
-    <div className="flex flex-col gap-1.5 w-full">
-      {label && <label className="text-sm font-semibold text-foreground/80">{label}</label>}
-      <input
-        className={`w-full px-4 py-3 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${error ? 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10' : ''} ${className}`}
-        {...props}
-      />
-      {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
-    </div>
-  );
-}
+export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & { label?: string; error?: string }>(
+  ({ className = "", label, error, ...props }, ref) => {
+    return (
+      <div className="flex flex-col gap-1.5 w-full">
+        {label && <label className="text-sm font-semibold text-foreground/80">{label}</label>}
+        <input
+          ref={ref}
+          className={`w-full px-4 py-3 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${error ? 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10' : ''} ${className}`}
+          {...props}
+        />
+        {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
+      </div>
+    );
+  }
+);
+Input.displayName = "Input";
 
-export function Select({ className = "", label, error, children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement> & { label?: string; error?: string }) {
+export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement> & { label?: string; error?: string }>(
+  ({ className = "", label, error, children, ...props }, ref) => {
+    return (
+      <div className="flex flex-col gap-1.5 w-full">
+        {label && <label className="text-sm font-semibold text-foreground/80">{label}</label>}
+        <div className="relative">
+          <select
+            ref={ref}
+            className={`w-full px-4 py-3 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-foreground cursor-pointer appearance-none ${error ? 'border-red-500 focus:border-red-500' : ''} ${className}`}
+            {...props}
+          >
+            {children}
+          </select>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
+        {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
+      </div>
+    );
+  }
+);
+Select.displayName = "Select";
+
+export function RadioGroup({ 
+  label, 
+  options, 
+  value, 
+  onChange, 
+  error 
+}: { 
+  label: string; 
+  options: { label: string; value: string }[]; 
+  value: string; 
+  onChange: (value: string) => void;
+  error?: string;
+}) {
   return (
-    <div className="flex flex-col gap-1.5 w-full">
-      {label && <label className="text-sm font-semibold text-foreground/80">{label}</label>}
-      <select
-        className={`w-full px-4 py-3 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-foreground cursor-pointer appearance-none ${error ? 'border-red-500 focus:border-red-500' : ''} ${className}`}
-        {...props}
-      >
-        {children}
-      </select>
+    <div className="flex flex-col gap-2 w-full">
+      <label className="text-sm font-semibold text-foreground/80">{label}</label>
+      <div className="flex flex-wrap gap-4">
+        {options.map((option) => (
+          <label 
+            key={option.value} 
+            className={`flex items-center gap-2 cursor-pointer p-3 rounded-lg border transition-all ${value === option.value ? 'border-[#FF6B6B] bg-[#FF6B6B]/5 text-[#FF6B6B]' : 'border-black/5 bg-black/5 hover:border-black/10'}`}
+          >
+            <input 
+              type="radio" 
+              className="sr-only" 
+              name="revealOption"
+              value={option.value} 
+              checked={value === option.value} 
+              onChange={() => onChange(option.value)}
+            />
+            <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${value === option.value ? 'border-[#FF6B6B]' : 'border-muted-foreground'}`}>
+              {value === option.value && <div className="w-2 h-2 rounded-full bg-[#FF6B6B]" />}
+            </div>
+            <span className="text-sm font-medium">{option.label}</span>
+          </label>
+        ))}
+      </div>
       {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
     </div>
   );
