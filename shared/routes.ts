@@ -24,6 +24,7 @@ export const api = {
       path: '/api/questions' as const,
       input: z.object({
         receiverEmail: z.string().email(),
+        receiverName: z.string().optional(),
         eventType: z.string().optional(),
         revealOption: z.enum(["After Purchase", "Never"]),
       }),

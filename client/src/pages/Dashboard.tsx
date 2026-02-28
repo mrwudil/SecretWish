@@ -54,12 +54,23 @@ export default function Dashboard() {
                         {new Date(q.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold mt-2">For: {q.receiverEmail}</h3>
+                    <h3 className="text-xl font-bold mt-2">
+                      For: {q.receiverName ? `${q.receiverName} (${q.receiverEmail})` : q.receiverEmail}
+                    </h3>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => window.open(`/r/${q.id}`, '_blank')}>
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    View Link
-                  </Button>
+                  <div className="flex gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
+                      q.wishes && q.wishes.length > 0 
+                        ? 'bg-green-50 text-green-600 border-green-100' 
+                        : 'bg-amber-50 text-amber-600 border-amber-100'
+                    }`}>
+                      {q.wishes && q.wishes.length > 0 ? 'Wishes Received' : 'Waiting for Wishes'}
+                    </span>
+                    <Button variant="outline" size="sm" onClick={() => window.open(`/r/${q.id}`, '_blank')}>
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      View Link
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="p-6">
@@ -133,14 +144,14 @@ export default function Dashboard() {
         </motion.div>
       )}
 
-      {/* Floating Bottom Banner */}
+      {/* Bottom Banner */}
       <motion.div 
-        initial={{ y: 100 }}
-        animate={{ y: 0 }}
-        transition={{ delay: 0.5, type: "spring" }}
-        className="fixed bottom-6 left-0 right-0 px-4 pointer-events-none z-50 flex justify-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="mt-12 flex justify-center"
       >
-        <div className="bg-white/90 backdrop-blur-lg border border-[#FF6B6B]/20 shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-4 pointer-events-auto max-w-2xl w-full">
+        <div className="bg-white/90 backdrop-blur-lg border border-[#FF6B6B]/20 shadow-xl rounded-2xl px-6 py-4 flex items-center gap-4 max-w-2xl w-full">
           <div className="bg-gradient-to-br from-amber-200 to-orange-400 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-5 h-5 text-white" />
           </div>

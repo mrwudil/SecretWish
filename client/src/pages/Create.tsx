@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   receiverEmail: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  receiverName: z.string().optional(),
   eventType: z.string().min(1, "Event type is required"),
   revealOption: z.enum(["After Purchase", "Never"]),
 });
@@ -94,13 +95,21 @@ export default function Create() {
         ) : (
           <Card>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <Input
-                label="Receiver's Email (For our notifications)"
-                placeholder="gift@example.com"
-                type="email"
-                {...register("receiverEmail")}
-                error={errors.receiverEmail?.message}
-              />
+              <div className="grid md:grid-cols-2 gap-6">
+                <Input
+                  label="Receiver's Email (For our notifications)"
+                  placeholder="gift@example.com"
+                  type="email"
+                  {...register("receiverEmail")}
+                  error={errors.receiverEmail?.message}
+                />
+                <Input
+                  label="Receiver's First Name"
+                  placeholder="Jane"
+                  {...register("receiverName")}
+                  error={errors.receiverName?.message}
+                />
+              </div>
               
               <div className="grid gap-6">
                 <Select

@@ -9,6 +9,7 @@ export const questions = pgTable("questions", {
   id: varchar("id").primaryKey(),
   senderId: varchar("sender_id").references(() => users.id),
   receiverEmail: varchar("receiver_email").notNull(),
+  receiverName: varchar("receiver_name"),
   eventType: varchar("event_type").notNull().default("Birthday"),
   revealOption: varchar("reveal_option").notNull().default("After Purchase"),
   createdAt: timestamp("created_at").defaultNow().notNull(),

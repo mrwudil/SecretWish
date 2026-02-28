@@ -35,6 +35,7 @@ export async function registerRoutes(
         id: shortId,
         senderId: req.user.claims.sub,
         receiverEmail: input.receiverEmail,
+        receiverName: input.receiverName || null,
         eventType: input.eventType || "Birthday",
         revealOption: input.revealOption,
       });
@@ -44,7 +45,7 @@ export async function registerRoutes(
       await sendEmail(
         question.receiverEmail,
         "Someone wants to know your wish!",
-        `🎁 Someone wants to know your birthday wish. Tap the link: ${link}`
+        `🎁 ${question.receiverName || 'Someone'} wants to know your birthday wish. Tap the link: ${link}`
       );
 
       res.status(201).json(question);
@@ -132,6 +133,17 @@ export async function registerRoutes(
       const wish = await storage.updateWishStatus(Number(req.params.wishId), input.status);
       if (!wish) {
         return res.status(404).json({ message: "Wish not found" });
+      }
+
+      // Send status update notification to receiver
+      const question = await storage.getQuestion(wish.questionId);
+      if (question) {
+        const statusText = input.status === 'surprise_in_progress' ? 'confirmed' : 'passed on';
+        await sendEmail(
+          question.receiverEmail,
+          "Update on your wishes!",
+          `Someone has ${statusText} one of your wishes! Check back for more updates.`
+        );
       }
       
       res.json(wish);
