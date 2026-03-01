@@ -8,12 +8,31 @@ import { registerAuthRoutes } from "./replit_integrations/auth/routes";
 import { isAuthenticated } from "./replit_integrations/auth/replitAuth";
 import { randomBytes } from "crypto";
 
-// Mock email service
+import { Resend } from 'resend';
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+// Mock email service with Resend integration
 async function sendEmail(to: string, subject: string, text: string) {
   console.log(`\n================================`);
-  console.log(`[MOCK EMAIL] To: ${to}`);
+  console.log(`[EMAIL] To: ${to}`);
   console.log(`Subject: ${subject}`);
-  console.log(`Body: ${text}`);
+  if (resend) {
+    try {
+      await resend.emails.send({
+        from: 'SecretWish <onboarding@resend.dev>',
+        to: [to],
+        subject: subject,
+        text: text,
+      });
+      console.log(`[RESEND] Email sent successfully via Resend API`);
+    } catch (error) {
+      console.error(`[RESEND ERROR]`, error);
+    }
+  } else {
+    console.log(`[MOCK] Body: ${text}`);
+    console.log(`(Set RESEND_API_KEY to send real emails)`);
+  }
   console.log(`================================\n`);
 }
 
