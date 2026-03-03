@@ -74,7 +74,7 @@ export default function Dashboard() {
                       For: {q.receiverName ? `${q.receiverName} (${q.receiverEmail})` : q.receiverEmail}
                     </h3>
                   </div>
-                  <div className="flex gap-2 items-center flex-shrink-0">
+                    <div className="flex gap-2 items-center flex-shrink-0">
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap ${
                       q.wishes && q.wishes.length > 0 
                         ? 'bg-green-50 text-green-600 border-green-100' 
@@ -86,16 +86,16 @@ export default function Dashboard() {
                       variant="outline" 
                       size="sm" 
                       onClick={() => window.open(`/r/${q.id}`, '_blank')}
-                      className="whitespace-nowrap flex items-center gap-1"
+                      className="whitespace-nowrap flex items-center gap-1 min-w-fit"
                     >
-                      <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
                       <span className="leading-none">View Link</span>
                     </Button>
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       onClick={() => deleteQuestion(q.id)}
-                      className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      className="text-red-500 hover:text-red-600 hover:bg-red-50 p-2"
                     >
                       <Trash2 className="w-4 h-4" />
                     </Button>
@@ -105,7 +105,7 @@ export default function Dashboard() {
                 <div className="p-4 sm:p-6">
                   <h4 className="text-sm font-semibold text-foreground mb-3 opacity-70">Wishes</h4>
                   {q.wishes && q.wishes.length > 0 ? (
-                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                       {q.wishes.map((wish) => (
                         <div key={wish.id} className="border border-black/5 rounded-lg p-3 bg-white shadow-sm flex flex-col justify-between group hover:border-[#FF6B6B]/30 transition-all">
                           <div>

@@ -12,8 +12,8 @@ import { useQuestion, useSubmitWishes } from "@/hooks/use-questions";
 const formSchema = z.object({
   wishes: z.array(z.object({
     itemName: z.string().min(1, "Item name is required"),
-    itemLink: z.string().url("Must be a valid URL").optional().or(z.literal('')),
-    price: z.coerce.number().min(0, "Invalid price").optional().or(z.literal(0)),
+    itemLink: z.string().optional().or(z.literal('')),
+    price: z.coerce.number().optional().or(z.literal(0)),
   })).min(1).max(3),
 });
 

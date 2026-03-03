@@ -1,4 +1,4 @@
-import { questions, wishes, notifications, type InsertQuestion, type Question, type InsertWish, type Wish, type InsertNotification, type Notification } from "@shared/schema";
+import { questions, wishes, notifications, users, type InsertQuestion, type Question, type InsertWish, type Wish, type InsertNotification, type Notification } from "@shared/schema";
 import { db } from "./db";
 import { eq, inArray } from "drizzle-orm";
 
@@ -9,12 +9,17 @@ export interface IStorage {
   createWishes(w: InsertWish[]): Promise<Wish[]>;
   getWishesForQuestion(questionId: string): Promise<Wish[]>;
   getWishesForQuestions(questionIds: string[]): Promise<Wish[]>;
-  updateWishStatus(id: number, status: string): Promise<Wish | undefined>;
+  updateWishStatus(id: number, status: string, revealSender?: boolean, senderNote?: string): Promise<Wish | undefined>;
   createNotification(n: InsertNotification): Promise<Notification>;
   deleteQuestion(id: string): Promise<boolean>;
+  getUser(id: string): Promise<any | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
+  async getUser(id: string): Promise<any | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
   async createQuestion(q: InsertQuestion): Promise<Question> {
     const [question] = await db.insert(questions).values(q).returning();
     return question;

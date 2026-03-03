@@ -67,7 +67,7 @@ export const api = {
       input: z.object({
         wishes: z.array(z.object({
           itemName: z.string(),
-          itemLink: z.string().url().optional().or(z.literal('')),
+          itemLink: z.string().optional().or(z.literal('')),
           price: z.number().optional(),
         })).max(3),
       }),
