@@ -96,6 +96,25 @@ export async function registerRoutes(
     }
   });
 
+  app.delete(api.questions.delete.path, isAuthenticated, async (req: any, res) => {
+    try {
+      const question = await storage.getQuestion(req.params.id);
+      if (!question) {
+        return res.status(404).json({ message: "Question not found" });
+      }
+      
+      // Ensure the user owns the question
+      if (question.senderId !== req.user.claims.sub) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      await storage.deleteQuestion(req.params.id);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.get(api.questions.get.path, async (req, res) => {
     try {
       const question = await storage.getQuestion(req.params.id);

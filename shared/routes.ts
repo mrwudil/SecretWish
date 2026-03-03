@@ -49,6 +49,15 @@ export const api = {
         200: z.array(z.custom<import('./schema').QuestionWithWishesResponse>()),
         401: errorSchemas.unauthorized,
       },
+    },
+    delete: {
+      method: 'DELETE' as const,
+      path: '/api/questions/:id' as const,
+      responses: {
+        200: z.object({ success: z.boolean() }),
+        401: errorSchemas.unauthorized,
+        404: errorSchemas.notFound,
+      },
     }
   },
   wishes: {

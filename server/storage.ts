@@ -11,6 +11,7 @@ export interface IStorage {
   getWishesForQuestions(questionIds: string[]): Promise<Wish[]>;
   updateWishStatus(id: number, status: string): Promise<Wish | undefined>;
   createNotification(n: InsertNotification): Promise<Notification>;
+  deleteQuestion(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -43,6 +44,12 @@ export class DatabaseStorage implements IStorage {
   async createNotification(n: InsertNotification): Promise<Notification> {
     const [notification] = await db.insert(notifications).values(n).returning();
     return notification;
+  }
+  async deleteQuestion(id: string): Promise<boolean> {
+    // Delete wishes first due to FK
+    await db.delete(wishes).where(eq(wishes.questionId, id));
+    const [deleted] = await db.delete(questions).where(eq(questions.id, id)).returning();
+    return !!deleted;
   }
 }
 
