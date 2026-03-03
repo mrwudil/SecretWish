@@ -37,8 +37,12 @@ export class DatabaseStorage implements IStorage {
     if (questionIds.length === 0) return [];
     return await db.select().from(wishes).where(inArray(wishes.questionId, questionIds));
   }
-  async updateWishStatus(id: number, status: string): Promise<Wish | undefined> {
-    const [wish] = await db.update(wishes).set({ status }).where(eq(wishes.id, id)).returning();
+  async updateWishStatus(id: number, status: string, revealSender?: boolean, senderNote?: string): Promise<Wish | undefined> {
+    const updateData: any = { status };
+    if (revealSender !== undefined) updateData.revealSender = revealSender;
+    if (senderNote !== undefined) updateData.senderNote = senderNote;
+    
+    const [wish] = await db.update(wishes).set(updateData).where(eq(wishes.id, id)).returning();
     return wish;
   }
   async createNotification(n: InsertNotification): Promise<Notification> {

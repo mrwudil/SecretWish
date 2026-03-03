@@ -86,10 +86,10 @@ export default function Dashboard() {
                       variant="outline" 
                       size="sm" 
                       onClick={() => window.open(`/r/${q.id}`, '_blank')}
-                      className="whitespace-nowrap"
+                      className="whitespace-nowrap flex items-center gap-1"
                     >
-                      <ExternalLink className="w-3 h-3 mr-1" />
-                      View Link
+                      <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      <span className="leading-none">View Link</span>
                     </Button>
                     <Button 
                       variant="ghost" 
@@ -105,7 +105,7 @@ export default function Dashboard() {
                 <div className="p-4 sm:p-6">
                   <h4 className="text-sm font-semibold text-foreground mb-3 opacity-70">Wishes</h4>
                   {q.wishes && q.wishes.length > 0 ? (
-                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                       {q.wishes.map((wish) => (
                         <div key={wish.id} className="border border-black/5 rounded-lg p-3 bg-white shadow-sm flex flex-col justify-between group hover:border-[#FF6B6B]/30 transition-all">
                           <div>
@@ -126,7 +126,11 @@ export default function Dashboard() {
                                 size="sm" 
                                 className="flex-1 h-7 text-[10px] px-2"
                                 disabled={updateWish.isPending}
-                                onClick={() => updateWish.mutate({ wishId: wish.id, status: 'surprise_in_progress' })}
+                                onClick={() => {
+                                  if (confirm("Mark this wish as picked?")) {
+                                    updateWish.mutate({ wishId: wish.id, status: 'surprise_in_progress' });
+                                  }
+                                }}
                               >
                                 <Gift className="w-2.5 h-2.5 mr-1" /> Pick
                               </Button>
@@ -135,16 +139,48 @@ export default function Dashboard() {
                                 variant="secondary" 
                                 className="flex-1 h-7 text-[10px] px-2"
                                 disabled={updateWish.isPending}
-                                onClick={() => updateWish.mutate({ wishId: wish.id, status: 'not_this_time' })}
+                                onClick={() => {
+                                  if (confirm("Pass on this wish?")) {
+                                    updateWish.mutate({ wishId: wish.id, status: 'not_this_time' });
+                                  }
+                                }}
                               >
                                 Pass
                               </Button>
                             </div>
                           ) : (
-                            <div className="mt-2 pt-2 border-t border-black/5 flex items-center">
-                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${wish.status === 'surprise_in_progress' ? 'bg-[#FF6B6B]/10 text-[#FF6B6B]' : 'bg-black/5 text-muted-foreground'}`}>
-                                {wish.status === 'surprise_in_progress' ? 'Confirmed' : 'Passed'}
-                              </span>
+                            <div className="mt-2 pt-2 border-t border-black/5 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${wish.status === 'surprise_in_progress' ? 'bg-[#FF6B6B]/10 text-[#FF6B6B]' : 'bg-black/5 text-muted-foreground'}`}>
+                                  {wish.status === 'surprise_in_progress' ? 'Confirmed' : 'Passed'}
+                                </span>
+                                {wish.status === 'surprise_in_progress' && !wish.revealSender && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 text-[9px] px-2"
+                                    onClick={() => {
+                                      const note = prompt("Write a note for the recipient (optional):");
+                                      if (note !== null) {
+                                        updateWish.mutate({ 
+                                          wishId: wish.id, 
+                                          status: wish.status,
+                                          revealSender: true,
+                                          senderNote: note
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    Reveal Sender
+                                  </Button>
+                                )}
+                              </div>
+                              {wish.revealSender && (
+                                <div className="bg-amber-50 p-2 rounded border border-amber-100 text-[10px]">
+                                  <p className="font-bold text-amber-700">Identity Revealed ✨</p>
+                                  {wish.senderNote && <p className="text-amber-600 italic mt-0.5 line-clamp-2">"{wish.senderNote}"</p>}
+                                </div>
+                              )}
                             </div>
                           )}
                         </div>

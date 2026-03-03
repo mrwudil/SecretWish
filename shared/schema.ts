@@ -22,6 +22,8 @@ export const wishes = pgTable("wishes", {
   itemLink: text("item_link"),
   price: integer("price"),
   status: varchar("status").notNull().default("pending"), 
+  revealSender: boolean("reveal_sender").default(false),
+  senderNote: text("sender_note"),
 });
 
 export const notifications = pgTable("notifications", {

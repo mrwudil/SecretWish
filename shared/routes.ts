@@ -82,6 +82,8 @@ export const api = {
       path: '/api/wishes/:wishId/status' as const,
       input: z.object({
         status: z.enum(["pending", "surprise_in_progress", "not_this_time"]),
+        revealSender: z.boolean().optional(),
+        senderNote: z.string().optional(),
       }),
       responses: {
         200: z.custom<import('./schema').WishResponse>(),

@@ -146,11 +146,15 @@ export async function registerRoutes(
       
       const wishes = await storage.createWishes(wishesData);
 
-      await sendEmail(
-        "sender@secretwish.com", // Mock sender email
-        "Your secret question has been answered",
-        `Your secret question has been answered. View wishes: ${req.protocol}://${req.get('host')}/`
-      );
+      // Get sender email from the user record
+      const sender = await storage.getUser(question.senderId);
+      if (sender && sender.email) {
+        await sendEmail(
+          sender.email,
+          "Your secret question has been answered",
+          `Your secret question has been answered by ${question.receiverName || question.receiverEmail}. View wishes: ${req.protocol}://${req.get('host')}/`
+        );
+      }
 
       res.status(201).json(wishes);
     } catch (err) {
@@ -168,7 +172,12 @@ export async function registerRoutes(
     try {
       const input = api.wishes.updateStatus.input.parse(req.body);
       
-      const wish = await storage.updateWishStatus(Number(req.params.wishId), input.status);
+      const wish = await storage.updateWishStatus(
+        Number(req.params.wishId), 
+        input.status, 
+        input.revealSender, 
+        input.senderNote
+      );
       if (!wish) {
         return res.status(404).json({ message: "Wish not found" });
       }
@@ -176,11 +185,21 @@ export async function registerRoutes(
       // Send status update notification to receiver
       const question = await storage.getQuestion(wish.questionId);
       if (question) {
+        const sender = await storage.getUser(question.senderId);
         const statusText = input.status === 'surprise_in_progress' ? 'confirmed' : 'passed on';
+        let body = `Someone has ${statusText} one of your wishes! Check back for more updates.`;
+        
+        if (input.revealSender && sender) {
+          body += `\n\nSurprise revealed! This wish was fulfilled by: ${sender.firstName || sender.email}`;
+          if (input.senderNote) {
+            body += `\nNote from sender: ${input.senderNote}`;
+          }
+        }
+
         await sendEmail(
           question.receiverEmail,
           "Update on your wishes!",
-          `Someone has ${statusText} one of your wishes! Check back for more updates.`
+          body
         );
       }
       
