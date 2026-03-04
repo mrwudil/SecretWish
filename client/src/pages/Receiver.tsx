@@ -8,6 +8,7 @@ import confetti from "canvas-confetti";
 import { Gift, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import { Button, Card, Input } from "@/components/ui-elements";
 import { useQuestion, useSubmitWishes } from "@/hooks/use-questions";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   wishes: z.array(z.object({
@@ -26,6 +27,7 @@ export default function Receiver() {
   const { data: question, isLoading: isQuestionLoading } = useQuestion(id);
   const submitMutation = useSubmitWishes(id);
   const [isSuccess, setIsSuccess] = useState(false);
+  const { toast } = useToast();
 
   const { register, control, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -71,8 +73,10 @@ export default function Receiver() {
       await submitMutation.mutateAsync(data);
       setIsSuccess(true);
       triggerConfetti();
+      toast({ title: "Wishes Sent!", description: "Your wishes have been delivered successfully." });
     } catch (err) {
       console.error(err);
+      toast({ title: "Submission Failed", description: "There was an error sending your wishes. Please try again.", variant: "destructive" });
     }
   };
 

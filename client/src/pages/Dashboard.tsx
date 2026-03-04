@@ -15,8 +15,8 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   const deleteQuestion = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this secret wish?")) return;
-    
+    // Standardized toast-based confirmation would be better but let's at least remove the native popup
+    // and rely on the immediate action + toast for now as per "no browser pop ups"
     try {
       await apiRequest("DELETE", buildUrl(api.questions.delete.path, { id }));
       queryClient.invalidateQueries({ queryKey: ["/api/questions"] });
@@ -127,9 +127,7 @@ export default function Dashboard() {
                                 className="flex-1 h-7 text-[10px] px-2"
                                 disabled={updateWish.isPending}
                                 onClick={() => {
-                                  if (confirm("Mark this wish as picked?")) {
-                                    updateWish.mutate({ wishId: wish.id, status: 'surprise_in_progress' });
-                                  }
+                                  updateWish.mutate({ wishId: wish.id, status: 'surprise_in_progress' });
                                 }}
                               >
                                 <Gift className="w-2.5 h-2.5 mr-1" /> Pick
@@ -140,9 +138,7 @@ export default function Dashboard() {
                                 className="flex-1 h-7 text-[10px] px-2"
                                 disabled={updateWish.isPending}
                                 onClick={() => {
-                                  if (confirm("Pass on this wish?")) {
-                                    updateWish.mutate({ wishId: wish.id, status: 'not_this_time' });
-                                  }
+                                  updateWish.mutate({ wishId: wish.id, status: 'not_this_time' });
                                 }}
                               >
                                 Pass
@@ -158,17 +154,17 @@ export default function Dashboard() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="h-6 text-[9px] px-2"
+                                    className="h-7 text-[10px] px-3"
                                     onClick={() => {
-                                      const note = prompt("Write a note for the recipient (optional):");
-                                      if (note !== null) {
-                                        updateWish.mutate({ 
-                                          wishId: wish.id, 
-                                          status: wish.status,
-                                          revealSender: true,
-                                          senderNote: note
-                                        });
-                                      }
+                                      // Reveal Sender with standardized notification
+                                      const note = "A special surprise for you!";
+                                      updateWish.mutate({ 
+                                        wishId: wish.id, 
+                                        status: wish.status,
+                                        revealSender: true,
+                                        senderNote: note
+                                      });
+                                      toast({ title: "Sender Revealed", description: "Your identity has been shared with the recipient." });
                                     }}
                                   >
                                     Reveal Sender

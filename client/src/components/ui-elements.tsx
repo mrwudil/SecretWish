@@ -13,23 +13,23 @@ export function Button({
   
   const variants = {
     primary: "bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] text-white shadow-lg shadow-[#FF6B6B]/25 hover:shadow-xl hover:shadow-[#FF6B6B]/30",
-    secondary: "bg-[#A0A0A0] text-white shadow-md shadow-black/5 hover:shadow-lg",
+    secondary: "bg-black/5 text-muted-foreground hover:bg-black/10",
     outline: "bg-transparent border-2 border-[#FF6B6B] text-[#FF6B6B] hover:bg-[#FF6B6B]/5",
     ghost: "bg-transparent text-muted-foreground hover:text-foreground hover:bg-black/5",
   };
 
   const sizes = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-6 py-3 text-base",
-    lg: "px-8 py-4 text-lg font-semibold",
+    sm: "px-3 py-1.5 text-xs",
+    md: "px-5 py-2.5 text-sm",
+    lg: "px-7 py-3.5 text-base font-semibold",
   };
 
   return (
     <motion.button
-      whileHover={disabled ? {} : { scale: 1.05 }}
+      whileHover={disabled ? {} : { scale: 1.02 }}
       whileTap={disabled ? {} : { scale: 0.98 }}
       disabled={disabled}
-      className={`rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`rounded-lg font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
       {children}
@@ -52,13 +52,13 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
   ({ className = "", label, error, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1.5 w-full">
-        {label && <label className="text-sm font-semibold text-foreground/80">{label}</label>}
+        {label && <label className="text-[13px] font-semibold text-foreground/70">{label}</label>}
         <input
           ref={ref}
-          className={`w-full px-4 py-3 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-foreground placeholder:text-muted-foreground/60 ${error ? 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10' : ''} ${className}`}
+          className={`w-full px-4 py-2.5 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-[14px] text-foreground placeholder:text-muted-foreground/50 ${error ? 'border-red-500 bg-red-50 focus:border-red-500 focus:ring-red-500/10' : ''} ${className}`}
           {...props}
         />
-        {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
+        {error && <span className="text-[12px] text-red-500 font-medium">{error}</span>}
       </div>
     );
   }
@@ -69,27 +69,27 @@ export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttrib
   ({ className = "", label, error, children, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1.5 w-full">
-        {label && <label className="text-sm font-semibold text-foreground/80">{label}</label>}
+        {label && <label className="text-[13px] font-semibold text-foreground/70">{label}</label>}
         <div className="relative">
           <select
             ref={ref}
-            className={`w-full px-4 py-3 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-foreground cursor-pointer appearance-none ${error ? 'border-red-500 focus:border-red-500' : ''} ${className}`}
+            className={`w-full px-4 py-2.5 rounded-lg bg-black/5 border border-transparent focus:bg-white focus:border-[#FF6B6B] focus:ring-4 focus:ring-[#FF6B6B]/10 transition-all outline-none text-[14px] text-foreground cursor-pointer appearance-none ${error ? 'border-red-500 focus:border-red-500' : ''} ${className}`}
             {...props}
           >
             {children}
           </select>
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground/60">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </div>
         </div>
-        {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
+        {error && <span className="text-[12px] text-red-500 font-medium">{error}</span>}
       </div>
     );
   }
 );
 Select.displayName = "Select";
 
-export function RadioGroup({ 
+export const RadioGroup = ({ 
   label, 
   options, 
   value, 
@@ -101,15 +101,15 @@ export function RadioGroup({
   value: string; 
   onChange: (value: string) => void;
   error?: string;
-}) {
+}) => {
   return (
     <div className="flex flex-col gap-2 w-full">
-      <label className="text-sm font-semibold text-foreground/80">{label}</label>
-      <div className="flex flex-wrap gap-4">
+      <label className="text-[13px] font-semibold text-foreground/70">{label}</label>
+      <div className="flex flex-wrap gap-3">
         {options.map((option) => (
           <label 
             key={option.value} 
-            className={`flex items-center gap-2 cursor-pointer p-3 rounded-lg border transition-all ${value === option.value ? 'border-[#FF6B6B] bg-[#FF6B6B]/5 text-[#FF6B6B]' : 'border-black/5 bg-black/5 hover:border-black/10'}`}
+            className={`flex items-center gap-2 cursor-pointer px-4 py-2.5 rounded-lg border transition-all ${value === option.value ? 'border-[#FF6B6B] bg-[#FF6B6B]/5 text-[#FF6B6B]' : 'border-black/5 bg-black/5 hover:border-black/10'}`}
           >
             <input 
               type="radio" 
@@ -119,17 +119,17 @@ export function RadioGroup({
               checked={value === option.value} 
               onChange={() => onChange(option.value)}
             />
-            <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${value === option.value ? 'border-[#FF6B6B]' : 'border-muted-foreground'}`}>
-              {value === option.value && <div className="w-2 h-2 rounded-full bg-[#FF6B6B]" />}
+            <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${value === option.value ? 'border-[#FF6B6B]' : 'border-muted-foreground/40'}`}>
+              {value === option.value && <div className="w-1.5 h-1.5 rounded-full bg-[#FF6B6B]" />}
             </div>
-            <span className="text-sm font-medium">{option.label}</span>
+            <span className="text-[14px] font-medium">{option.label}</span>
           </label>
         ))}
       </div>
-      {error && <span className="text-sm text-red-500 font-medium">{error}</span>}
+      {error && <span className="text-[12px] text-red-500 font-medium">{error}</span>}
     </div>
   );
-}
+};
 
 export function Nav() {
   return (

@@ -50,7 +50,7 @@ export default function Create() {
     if (createdLink) {
       navigator.clipboard.writeText(createdLink);
       setCopied(true);
-      toast({ title: "Link copied to clipboard!" });
+      toast({ title: "Link Copied", description: "The secret link is ready to be shared!" });
       setTimeout(() => setCopied(false), 3000);
     }
   };
