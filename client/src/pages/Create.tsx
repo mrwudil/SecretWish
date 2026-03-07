@@ -71,25 +71,27 @@ export default function Create() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-4">Link Created!</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-4">Secret Wish Sent!</h2>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              Send this secure link to your recipient. They won't need an account to add their wishes.
+              We've sent an anonymous email to the recipient with your secret link. They can now add their wishes without knowing it was you!
             </p>
             
-            <div className="flex items-center gap-2 max-w-lg mx-auto bg-black/5 p-2 rounded-lg border border-black/10">
-              <div className="flex-1 overflow-hidden px-3 text-sm text-foreground/80 text-ellipsis whitespace-nowrap">
-                {createdLink}
-              </div>
-              <Button onClick={copyLink} className="flex-shrink-0" size="sm">
-                {copied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-                {copied ? "Copied!" : "Copy Link"}
-              </Button>
-            </div>
-            
-            <div className="mt-8">
+            <div className="flex flex-col items-center gap-4 mt-8">
               <Link href="/">
-                <Button variant="outline">Return to Dashboard</Button>
+                <Button className="w-full sm:w-auto">Return to Dashboard</Button>
               </Link>
+              <p className="text-xs text-muted-foreground">
+                Want to save the link for yourself?
+              </p>
+              <div className="flex items-center gap-2 max-w-lg mx-auto bg-black/5 p-2 rounded-lg border border-black/10 w-full opacity-60">
+                <div className="flex-1 overflow-hidden px-3 text-sm text-foreground/80 text-ellipsis whitespace-nowrap">
+                  {createdLink}
+                </div>
+                <Button onClick={copyLink} variant="ghost" size="sm" className="flex-shrink-0">
+                  {copied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+              </div>
             </div>
           </Card>
         ) : (

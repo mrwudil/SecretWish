@@ -70,7 +70,7 @@ export async function registerRoutes(
       await sendEmail(
         question.receiverEmail,
         "Someone wants to know your wish!",
-        `🎁 ${question.receiverName || 'Someone'} wants to know your birthday wish. Tap the link: ${link}`
+        `🎁 ${question.receiverName || 'Someone'} wants to know your birthday wish. Tap the link to add your wishes anonymously: ${link}\n\nThis is a secret request. Only the sender will see your wishes, and they won't know which one you want most until they pick one!`
       );
 
       res.status(201).json(question);
