@@ -15,6 +15,21 @@ export interface IStorage {
   getUser(id: string): Promise<any | undefined>;
 }
 
+const noDbStorage: IStorage = {
+  async createQuestion() { throw new Error("Database not configured"); },
+  async getQuestion() { throw new Error("Database not configured"); },
+  async getQuestionsBySender() { throw new Error("Database not configured"); },
+  async createWishes() { throw new Error("Database not configured"); },
+  async getWishesForQuestion() { throw new Error("Database not configured"); },
+  async getWishesForQuestions() { throw new Error("Database not configured"); },
+  async updateWishStatus() { throw new Error("Database not configured"); },
+  async createNotification() { throw new Error("Database not configured"); },
+  async deleteQuestion() { throw new Error("Database not configured"); },
+  async getUser() { throw new Error("Database not configured"); },
+};
+
+export const storage: IStorage = db ? new DatabaseStorage() : noDbStorage;
+
 export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<any | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));

@@ -7,13 +7,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "..", "public");
+  let distPath = path.resolve(__dirname, "public");
+  
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    distPath = path.resolve(__dirname, "..", "public");
+  }
+  
+  if (!fs.existsSync(distPath)) {
+    console.log("Warning: Could not find static files at", distPath);
+    return;
   }
 
+  console.log("Serving static files from:", distPath);
   app.use(express.static(distPath));
 
   app.get("/{*path}", (_req, res) => {
