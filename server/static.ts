@@ -3,7 +3,15 @@ import fs from "fs";
 import path from "path";
 
 export function serveStatic(app: Express) {
-  let distPath = path.resolve(process.cwd(), "dist", "public");
+  const isVercel = process.env.VERCEL === "1";
+  
+  let distPath: string;
+  
+  if (isVercel) {
+    distPath = path.resolve(__dirname, "..", "public");
+  } else {
+    distPath = path.resolve(process.cwd(), "dist", "public");
+  }
   
   if (!fs.existsSync(distPath)) {
     distPath = path.resolve(process.cwd(), "public");
