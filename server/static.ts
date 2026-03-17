@@ -5,20 +5,29 @@ import path from "path";
 export function serveStatic(app: Express) {
   const isVercel = process.env.VERCEL === "1";
   
-  let distPath: string;
+  let possiblePaths = [
+    path.join(process.cwd(), "dist", "public"),
+    path.join(process.cwd(), "public"),
+    path.join(process.cwd(), "client", "dist"),
+  ];
   
   if (isVercel) {
-    distPath = path.resolve(__dirname, "..", "public");
-  } else {
-    distPath = path.resolve(process.cwd(), "dist", "public");
+    possiblePaths = [
+      path.join(process.cwd(), "dist", "public"),
+      path.join(process.cwd(), "public"),
+    ];
   }
   
-  if (!fs.existsSync(distPath)) {
-    distPath = path.resolve(process.cwd(), "public");
+  let distPath = "";
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+      distPath = p;
+      break;
+    }
   }
   
-  if (!fs.existsSync(distPath)) {
-    console.log("Warning: Could not find static files at", distPath);
+  if (!distPath) {
+    console.log("Warning: Could not find static files. Checked:", possiblePaths);
     return;
   }
 
@@ -26,6 +35,6 @@ export function serveStatic(app: Express) {
   app.use(express.static(distPath));
 
   app.get("/{*path}", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+    res.sendFile(path.join(distPath, "index.html"));
   });
 }
