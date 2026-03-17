@@ -49,8 +49,10 @@ export async function registerRoutes(
   let authAvailable = false;
   try {
     await setupAuth(app);
-    registerAuthRoutes(app);
-    authAvailable = true;
+    if (process.env.REPL_ID) {
+      registerAuthRoutes(app);
+      authAvailable = true;
+    }
   } catch (err) {
     console.log("Auth not available, skipping...", err);
   }

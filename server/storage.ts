@@ -76,5 +76,3 @@ export class DatabaseStorage implements IStorage {
     return !!deleted;
   }
 }
-
-export const storage = new DatabaseStorage();
